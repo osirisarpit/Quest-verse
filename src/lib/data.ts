@@ -1,4 +1,4 @@
-import type { User, Rival, Quest, Guild } from '@/lib/types';
+import type { User, Rival, Quest, Guild, RivalryQuest } from '@/lib/types';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export const mockUser: User = {
@@ -94,5 +94,26 @@ export const mockGuilds: Guild[] = [
     members: ['user6'],
     totalXP: 5600,
     avatar: PlaceHolderImages.find(p => p.id === 'guild-avatar-3')?.imageUrl || ''
+  },
+];
+
+export const mockRivalryQuests: RivalryQuest[] = [
+  {
+    id: 'rq1',
+    title: 'Weekly XP Challenge',
+    description: 'Earn the most XP in one week.',
+    xpReward: 200,
+    userProgress: 450,
+    rivalProgress: 300,
+    target: 1000,
+  },
+  {
+    id: 'rq2',
+    title: 'Quest Completion Spree',
+    description: 'Complete 5 quests before your rival.',
+    xpReward: 150,
+    userProgress: 3,
+    rivalProgress: 4,
+    target: 5,
   },
 ];

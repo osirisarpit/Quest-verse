@@ -40,3 +40,13 @@ export type Guild = {
   totalXP: number;
   avatar: string;
 };
+
+export type RivalryQuest = {
+  id: string;
+  title: string;
+  description: string;
+  xpReward: number;
+  userProgress: number;
+  rivalProgress: number;
+  target: number;
+};

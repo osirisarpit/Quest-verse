@@ -7,12 +7,40 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { mockRival, mockUser } from '@/lib/data';
+import { mockRival, mockUser, mockRivalryQuests } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useToast } from '@/hooks/use-toast';
-import { Copy } from 'lucide-react';
+import { Copy, Swords } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { RivalryQuest } from '@/lib/types';
 
 const rivalAvatars = PlaceHolderImages.filter(p => p.id.startsWith('rival-avatar'));
+
+function RivalryQuestItem({ quest }: { quest: RivalryQuest }) {
+  const userPercentage = (quest.userProgress / quest.target) * 100;
+  const rivalPercentage = (quest.rivalProgress / quest.target) * 100;
+
+  return (
+    <div className="space-y-3 rounded-md border-2 border-foreground bg-card p-4 shadow-pixel-sm">
+      <div>
+        <h4 className="font-semibold">{quest.title}</h4>
+        <p className="text-sm text-muted-foreground">{quest.description}</p>
+        <p className="text-sm font-bold text-primary">{quest.xpReward} XP Reward</p>
+      </div>
+      <div className="space-y-2">
+        <div className="space-y-1">
+          <Label className="text-xs">Your Progress ({quest.userProgress}/{quest.target})</Label>
+          <Progress value={userPercentage} className="h-3" />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs">Rival's Progress ({quest.rivalProgress}/{quest.target})</Label>
+          <Progress value={rivalPercentage} className="h-3" indicatorClassName="bg-destructive" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 export default function RivalPage() {
     const [rival, setRival] = useState(mockRival);
@@ -147,6 +175,23 @@ export default function RivalPage() {
                     </CardContent>
                 </Card>
             )}
+
+            <Card className="border-2 border-foreground bg-card shadow-pixel">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Swords />
+                        Rivalry Quests
+                    </CardTitle>
+                    <CardDescription>
+                        Complete these special quests to get a leg up on your rival. May the best adventurer win!
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {mockRivalryQuests.map((quest) => (
+                        <RivalryQuestItem key={quest.id} quest={quest} />
+                    ))}
+                </CardContent>
+            </Card>
         </div>
     );
 }
