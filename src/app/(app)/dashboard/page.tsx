@@ -1,4 +1,4 @@
-import { mockUser, mockRival, mockQuests } from '@/lib/data';
+import { mockUser, mockRival, mockQuests, mockRivalryQuests } from '@/lib/data';
 import { DashboardClient } from './components';
 
 export default function DashboardPage() {
@@ -16,6 +16,7 @@ export default function DashboardPage() {
       user={mockUser}
       rival={mockRival}
       initialQuests={pendingQuests}
+      initialRivalryQuests={mockRivalryQuests}
     />
   );
 }

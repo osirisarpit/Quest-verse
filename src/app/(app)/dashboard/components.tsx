@@ -1,6 +1,6 @@
 'use client';
 
-import type { User, Rival, Quest } from '@/lib/types';
+import type { User, Rival, Quest, RivalryQuest } from '@/lib/types';
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -12,8 +12,9 @@ import { DumbbellIcon } from '@/components/icons/dumbbell-icon';
 import { RepeatIcon } from '@/components/icons/repeat-icon';
 import { getTaunt } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Flame, Zap } from 'lucide-react';
+import { Flame, Swords, Zap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Label } from '@/components/ui/label';
 
 const categoryIcons = {
   study: <BookOpenIcon className="h-6 w-6" />,
@@ -93,6 +94,31 @@ function QuestItem({
   );
 }
 
+function RivalryQuestItem({ quest }: { quest: RivalryQuest }) {
+    const userPercentage = (quest.userProgress / quest.target) * 100;
+    const rivalPercentage = (quest.rivalProgress / quest.target) * 100;
+  
+    return (
+      <div className="space-y-3 rounded-md border-2 border-foreground bg-card p-4 shadow-pixel-sm">
+        <div>
+          <h4 className="font-semibold">{quest.title}</h4>
+          <p className="text-sm text-muted-foreground">{quest.description}</p>
+          <p className="text-sm font-bold text-primary">{quest.xpReward} XP Reward</p>
+        </div>
+        <div className="space-y-2">
+          <div className="space-y-1">
+            <Label className="text-xs">Your Progress ({quest.userProgress}/{quest.target})</Label>
+            <Progress value={userPercentage} className="h-3" />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Rival's Progress ({quest.rivalProgress}/{quest.target})</Label>
+            <Progress value={rivalPercentage} className="h-3" indicatorClassName="bg-destructive" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 function RivalSection({ user, initialRival }: { user: User; initialRival: Rival }) {
   const [rival, setRival] = useState(initialRival);
   const [taunt, setTaunt] = useState<string | null>(null);
@@ -168,13 +194,16 @@ export function DashboardClient({
   user: initialUser,
   rival: initialRival,
   initialQuests,
+  initialRivalryQuests
 }: {
   user: User;
   rival: Rival;
   initialQuests: Quest[];
+  initialRivalryQuests: RivalryQuest[];
 }) {
   const [user, setUser] = useState(initialUser);
   const [quests, setQuests] = useState(initialQuests);
+  const [rivalryQuests, setRivalryQuests] = useState(initialRivalryQuests);
   const { toast } = useToast();
 
   const handleCompleteQuest = (questId: string, xp: number) => {
@@ -251,6 +280,31 @@ export function DashboardClient({
             )}
           </CardContent>
         </Card>
+        
+        <Card className="border-2 border-foreground bg-card shadow-pixel">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <Swords />
+                Rivalry Quests
+            </CardTitle>
+            <CardDescription>
+                Complete these special quests to get a leg up on your rival.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {rivalryQuests.length > 0 ? (
+                rivalryQuests.map((quest) => (
+                    <RivalryQuestItem key={quest.id} quest={quest} />
+                ))
+            ) : (
+              <div className="text-center text-muted-foreground py-8">
+                <p>No active rivalry quests.</p>
+                <p>Go to the Rival page to create one!</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
       </div>
       <div className="space-y-6">
         <RivalSection user={user} initialRival={initialRival} />
