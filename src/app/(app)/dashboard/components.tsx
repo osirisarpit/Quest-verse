@@ -1,7 +1,7 @@
 'use client';
 
-import type { User, Rival, Quest, RivalryQuest } from '@/lib/types';
 import React, { useState, useEffect } from 'react';
+import type { User, Rival, Quest, RivalryQuest } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -208,20 +208,23 @@ export function DashboardClient({
   const { toast } = useToast();
 
   const prevLevelRef = React.useRef(user.level);
+
   useEffect(() => {
     const handleNewQuest = (event: Event) => {
         const customEvent = event as CustomEvent;
         if (customEvent.detail.type === 'standard') {
             const newQuest = customEvent.detail.quest as Quest;
-             // Only add if it's for today and not already in the list
             const today = new Date();
             const questDate = new Date(newQuest.createdForDate);
-            if (questDate.getDate() === today.getDate() &&
-                questDate.getMonth() === today.getMonth() &&
-                questDate.getFullYear() === today.getFullYear() &&
-                !quests.some(q => q.id === newQuest.id)) {
-                setQuests(prev => [newQuest, ...prev]);
-            }
+            setQuests(prev => {
+              if (questDate.getDate() === today.getDate() &&
+                  questDate.getMonth() === today.getMonth() &&
+                  questDate.getFullYear() === today.getFullYear() &&
+                  !prev.some(q => q.id === newQuest.id)) {
+                  return [newQuest, ...prev];
+              }
+              return prev;
+            });
         } else {
             setRivalryQuests(prev => [customEvent.detail.quest, ...prev]);
         }
@@ -229,7 +232,7 @@ export function DashboardClient({
 
     window.addEventListener('new-quest', handleNewQuest);
     return () => window.removeEventListener('new-quest', handleNewQuest);
-  }, [quests]);
+  }, []);
 
   useEffect(() => {
     if (user.level > prevLevelRef.current) {
