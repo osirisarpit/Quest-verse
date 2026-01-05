@@ -87,8 +87,9 @@ function QuestItem({
         size="sm"
         className="border-2 border-foreground shadow-pixel-sm hover:shadow-pixel transition-shadow"
         onClick={() => onComplete(quest.id, quest.xpReward)}
+        disabled={quest.status !== 'pending'}
       >
-        Complete
+        {quest.status === 'pending' ? 'Complete' : 'Completed'}
       </Button>
     </div>
   );
@@ -206,11 +207,21 @@ export function DashboardClient({
   const [rivalryQuests, setRivalryQuests] = useState(initialRivalryQuests);
   const { toast } = useToast();
 
+  const prevLevelRef = React.useRef(user.level);
   useEffect(() => {
     const handleNewQuest = (event: Event) => {
         const customEvent = event as CustomEvent;
         if (customEvent.detail.type === 'standard') {
-            setQuests(prev => [...prev, customEvent.detail.quest]);
+            const newQuest = customEvent.detail.quest as Quest;
+             // Only add if it's for today and not already in the list
+            const today = new Date();
+            const questDate = new Date(newQuest.createdForDate);
+            if (questDate.getDate() === today.getDate() &&
+                questDate.getMonth() === today.getMonth() &&
+                questDate.getFullYear() === today.getFullYear() &&
+                !quests.some(q => q.id === newQuest.id)) {
+                setQuests(prev => [...prev, newQuest]);
+            }
         } else {
             setRivalryQuests(prev => [...prev, customEvent.detail.quest]);
         }
@@ -218,21 +229,25 @@ export function DashboardClient({
 
     window.addEventListener('new-quest', handleNewQuest);
     return () => window.removeEventListener('new-quest', handleNewQuest);
-  }, []);
+  }, [quests]);
+
+  useEffect(() => {
+    if (user.level > prevLevelRef.current) {
+        toast({
+            title: "Level Up!",
+            description: `Congratulations! You've reached Level ${user.level}!`,
+        });
+    }
+    prevLevelRef.current = user.level;
+  }, [user.level, toast]);
 
   const handleCompleteQuest = (questId: string, xp: number) => {
-    setQuests((prevQuests) => prevQuests.filter((q) => q.id !== questId));
+    setQuests((prevQuests) => 
+        prevQuests.map(q => q.id === questId ? {...q, status: 'completed', completedAt: new Date()} : q)
+    );
     setUser((prevUser) => {
         const newTotalXP = prevUser.totalXP + xp;
         const newLevel = Math.floor(newTotalXP / 100) + 1;
-        
-        if (newLevel > prevUser.level) {
-            toast({
-                title: "Level Up!",
-                description: `Congratulations! You've reached Level ${newLevel}!`,
-            });
-        }
-        
         return {
             ...prevUser,
             totalXP: newTotalXP,
@@ -247,6 +262,15 @@ export function DashboardClient({
 
   const xpForNextLevel = user.level * 100;
   const xpProgress = user.totalXP % xpForNextLevel;
+  
+  const todaysQuests = quests.filter(q => {
+    const questDate = new Date(q.createdForDate);
+    const today = new Date();
+    return questDate.getDate() === today.getDate() &&
+           questDate.getMonth() === today.getMonth() &&
+           questDate.getFullYear() === today.getFullYear();
+  });
+
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -279,8 +303,8 @@ export function DashboardClient({
             <CardTitle>Today&apos;s Quests</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {quests.length > 0 ? (
-              quests.map((quest) => (
+            {todaysQuests.length > 0 ? (
+              todaysQuests.map((quest) => (
                 <QuestItem
                   key={quest.id}
                   quest={quest}
