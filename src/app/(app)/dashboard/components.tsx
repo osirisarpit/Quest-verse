@@ -1,7 +1,7 @@
 'use client';
 
 import type { User, Rival, Quest, RivalryQuest } from '@/lib/types';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -220,10 +220,10 @@ export function DashboardClient({
                 questDate.getMonth() === today.getMonth() &&
                 questDate.getFullYear() === today.getFullYear() &&
                 !quests.some(q => q.id === newQuest.id)) {
-                setQuests(prev => [...prev, newQuest]);
+                setQuests(prev => [newQuest, ...prev]);
             }
         } else {
-            setRivalryQuests(prev => [...prev, customEvent.detail.quest]);
+            setRivalryQuests(prev => [customEvent.detail.quest, ...prev]);
         }
     };
 
@@ -242,8 +242,15 @@ export function DashboardClient({
   }, [user.level, toast]);
 
   const handleCompleteQuest = (questId: string, xp: number) => {
+    let completedQuest: Quest | undefined;
     setQuests((prevQuests) => 
-        prevQuests.map(q => q.id === questId ? {...q, status: 'completed', completedAt: new Date()} : q)
+        prevQuests.map(q => {
+            if (q.id === questId) {
+                completedQuest = {...q, status: 'completed', completedAt: new Date()};
+                return completedQuest;
+            }
+            return q;
+        })
     );
     setUser((prevUser) => {
         const newTotalXP = prevUser.totalXP + xp;
@@ -254,10 +261,13 @@ export function DashboardClient({
             level: newLevel,
         }
     });
-    toast({
-        title: "Quest Complete!",
-        description: `You earned ${xp} XP!`,
-    });
+
+    if (completedQuest) {
+        toast({
+            title: "Quest Complete!",
+            description: `You earned ${completedQuest.xpReward} XP!`,
+        });
+    }
   };
 
   const xpForNextLevel = user.level * 100;
