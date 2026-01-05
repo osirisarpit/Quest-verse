@@ -1,3 +1,40 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "rival-avatar-1",
+      "description": "A pixel art avatar of a knight.",
+      "imageUrl": "https://images.unsplash.com/photo-1727449323072-069009f3ed0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxwaXhlbCUyMGtuaWdodHxlbnwwfHx8fDE3Njc1OTY2ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel knight"
+    },
+    {
+      "id": "rival-avatar-2",
+      "description": "A pixel art avatar of a mage.",
+      "imageUrl": "https://images.unsplash.com/photo-1758043322958-9c353d2364ef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwaXhlbCUyMG1hZ2V8ZW58MHx8fHwxNzY3NTk2Njg5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel mage"
+    },
+    {
+      "id": "rival-avatar-3",
+      "description": "A pixel art avatar of a robot.",
+      "imageUrl": "https://images.unsplash.com/photo-1697665896497-121e05c00f92?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwaXhlbCUyMHJvYm90fGVufDB8fHx8MTc2NzU5NjY4OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel robot"
+    },
+    {
+      "id": "guild-avatar-1",
+      "description": "A pixel art shield for a guild.",
+      "imageUrl": "https://images.unsplash.com/photo-1722691694088-b3b2ab29be31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwaXhlbCUyMHNoaWVsZHxlbnwwfHx8fDE3Njc1OTY2ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel shield"
+    },
+    {
+      "id": "guild-avatar-2",
+      "description": "A pixel art sword for a guild.",
+      "imageUrl": "https://images.unsplash.com/photo-1590444945460-2a51c8d9fd37?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwaXhlbCUyMHN3b3JkfGVufDB8fHx8MTc2NzU5NjY4OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel sword"
+    },
+    {
+      "id": "guild-avatar-3",
+      "description": "A pixel art castle for a guild.",
+      "imageUrl": "https://images.unsplash.com/photo-1584366210623-4bd94fb6c474?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwaXhlbCUyMGNhc3RsZXxlbnwwfHx8fDE3Njc1OTY2ODl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pixel castle"
+    }
+  ]
 }
