@@ -9,7 +9,7 @@ export const mockUser: User = {
   totalXP: 450,
   currentStreak: 12,
   lastActiveAt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-  rivalId: 'rival1',
+  rivalId: 'human-rival-id', // Changed to simulate a human rival
   createdAt: new Date('2024-01-01'),
   avatar: PlaceHolderImages.find(p => p.id === 'rival-avatar-1')?.imageUrl || '',
 };
