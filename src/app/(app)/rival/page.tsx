@@ -10,9 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { mockRival, mockUser, mockRivalryQuests } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Swords } from 'lucide-react';
+import { Copy, Plus, Swords } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { RivalryQuest } from '@/lib/types';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 const rivalAvatars = PlaceHolderImages.filter(p => p.id.startsWith('rival-avatar'));
 
@@ -41,12 +43,95 @@ function RivalryQuestItem({ quest }: { quest: RivalryQuest }) {
   );
 }
 
+function CreateRivalryQuestDialog({ onCreate }: { onCreate: (quest: RivalryQuest) => void }) {
+    const [open, setOpen] = useState(false);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [xpReward, setXpReward] = useState(100);
+    const [target, setTarget] = useState(10);
+    const { toast } = useToast();
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title || !description) {
+            toast({
+                variant: 'destructive',
+                title: 'Missing Fields',
+                description: 'Please fill out all fields to create a quest.'
+            });
+            return;
+        }
+
+        const newQuest: RivalryQuest = {
+            id: `rq${Date.now()}`,
+            title,
+            description,
+            xpReward,
+            target,
+            userProgress: 0,
+            rivalProgress: 0,
+        };
+
+        onCreate(newQuest);
+        toast({
+            title: 'Rivalry Quest Created!',
+            description: `The challenge "${title}" has been set.`,
+        });
+        setOpen(false);
+        // Reset form
+        setTitle('');
+        setDescription('');
+        setXpReward(100);
+        setTarget(10);
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="border-2 border-foreground shadow-pixel-sm hover:shadow-pixel transition-shadow">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create Quest
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px] border-2 border-foreground bg-card shadow-pixel">
+                <DialogHeader>
+                    <DialogTitle>Create Rivalry Quest</DialogTitle>
+                    <DialogDescription>
+                        Set a new challenge for you and your rival.
+                    </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="quest-title">Title</Label>
+                        <Input id="quest-title" value={title} onChange={(e) => setTitle(e.target.value)} className="border-2 border-foreground/50 focus:border-foreground" />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="quest-description">Description</Label>
+                        <Textarea id="quest-description" value={description} onChange={(e) => setDescription(e.target.value)} className="border-2 border-foreground/50 focus:border-foreground" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="quest-xp">XP Reward</Label>
+                            <Input id="quest-xp" type="number" value={xpReward} onChange={(e) => setXpReward(Number(e.target.value))} className="border-2 border-foreground/50 focus:border-foreground" />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="quest-target">Target Value</Label>
+                            <Input id="quest-target" type="number" value={target} onChange={(e) => setTarget(Number(e.target.value))} className="border-2 border-foreground/50 focus:border-foreground" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" className="w-full border-2 border-foreground shadow-pixel-sm hover:shadow-pixel transition-shadow">Create Challenge</Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}
 
 export default function RivalPage() {
     const [rival, setRival] = useState(mockRival);
-    // Using a separate state for user to simulate having a human rival or not.
-    // In a real app, this would come from the user's data.
     const [user, setUser] = useState({ ...mockUser, rivalId: mockUser.rivalId || null });
+    const [rivalryQuests, setRivalryQuests] = useState(mockRivalryQuests);
     const { toast } = useToast();
 
     const hasHumanRival = user.rivalId && user.rivalId !== 'rival1'; // 'rival1' is the default AI
@@ -69,6 +154,10 @@ export default function RivalPage() {
             description: "Invitation link copied to your clipboard.",
         });
     }
+
+    const handleCreateRivalryQuest = (newQuest: RivalryQuest) => {
+        setRivalryQuests(prev => [...prev, newQuest]);
+    };
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
@@ -177,19 +266,29 @@ export default function RivalPage() {
             )}
 
             <Card className="border-2 border-foreground bg-card shadow-pixel">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Swords />
-                        Rivalry Quests
-                    </CardTitle>
-                    <CardDescription>
-                        Complete these special quests to get a leg up on your rival. May the best adventurer win!
-                    </CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div className="space-y-1.5">
+                        <CardTitle className="flex items-center gap-2">
+                            <Swords />
+                            Rivalry Quests
+                        </CardTitle>
+                        <CardDescription>
+                            Complete these special quests to get a leg up on your rival.
+                        </CardDescription>
+                    </div>
+                    <CreateRivalryQuestDialog onCreate={handleCreateRivalryQuest} />
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {mockRivalryQuests.map((quest) => (
-                        <RivalryQuestItem key={quest.id} quest={quest} />
-                    ))}
+                    {rivalryQuests.length > 0 ? (
+                        rivalryQuests.map((quest) => (
+                            <RivalryQuestItem key={quest.id} quest={quest} />
+                        ))
+                    ) : (
+                      <div className="text-center text-muted-foreground py-8">
+                        <p>No active rivalry quests.</p>
+                        <p>Create a new one to challenge your rival!</p>
+                      </div>
+                    )}
                 </CardContent>
             </Card>
         </div>
