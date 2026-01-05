@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Flame, Swords, Zap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Label } from '@/components/ui/label';
+import { CreateQuestForm } from '@/app/(app)/quests/create/components';
 
 const categoryIcons = {
   study: <BookOpenIcon className="h-6 w-6" />,
@@ -214,17 +215,7 @@ export function DashboardClient({
         const customEvent = event as CustomEvent;
         if (customEvent.detail.type === 'standard') {
             const newQuest = customEvent.detail.quest as Quest;
-            const today = new Date();
-            const questDate = new Date(newQuest.createdForDate);
-            setQuests(prev => {
-              if (questDate.getDate() === today.getDate() &&
-                  questDate.getMonth() === today.getMonth() &&
-                  questDate.getFullYear() === today.getFullYear() &&
-                  !prev.some(q => q.id === newQuest.id)) {
-                  return [newQuest, ...prev];
-              }
-              return prev;
-            });
+            setQuests(prev => [newQuest, ...prev]);
         } else {
             setRivalryQuests(prev => [customEvent.detail.quest, ...prev]);
         }
@@ -310,6 +301,8 @@ export function DashboardClient({
             </div>
           </CardContent>
         </Card>
+
+        <CreateQuestForm onQuestCreated={() => { /* Can be used to scroll or other actions */}} />
 
         <Card className="border-2 border-foreground bg-card shadow-pixel">
           <CardHeader>
