@@ -1,7 +1,7 @@
 'use client';
 
 import type { User, Rival, Quest, RivalryQuest } from '@/lib/types';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -205,6 +205,20 @@ export function DashboardClient({
   const [quests, setQuests] = useState(initialQuests);
   const [rivalryQuests, setRivalryQuests] = useState(initialRivalryQuests);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const handleNewQuest = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        if (customEvent.detail.type === 'standard') {
+            setQuests(prev => [...prev, customEvent.detail.quest]);
+        } else {
+            setRivalryQuests(prev => [...prev, customEvent.detail.quest]);
+        }
+    };
+
+    window.addEventListener('new-quest', handleNewQuest);
+    return () => window.removeEventListener('new-quest', handleNewQuest);
+  }, []);
 
   const handleCompleteQuest = (questId: string, xp: number) => {
     setQuests((prevQuests) => prevQuests.filter((q) => q.id !== questId));

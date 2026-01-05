@@ -73,6 +73,10 @@ function CreateRivalryQuestDialog({ onCreate }: { onCreate: (quest: RivalryQuest
         };
 
         onCreate(newQuest);
+        
+        // Dispatch a custom event with the new rivalry quest
+        window.dispatchEvent(new CustomEvent('new-quest', { detail: { quest: newQuest, type: 'rivalry' } }));
+        
         toast({
             title: 'Rivalry Quest Created!',
             description: `The challenge "${title}" has been set.`,
