@@ -15,7 +15,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Flame, Swords, Zap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Label } from '@/components/ui/label';
-import { CreateQuestForm } from '@/app/(app)/quests/create/components';
 
 const categoryIcons = {
   study: <BookOpenIcon className="h-6 w-6" />,
@@ -301,8 +300,6 @@ export function DashboardClient({
             </div>
           </CardContent>
         </Card>
-
-        <CreateQuestForm onQuestCreated={() => { /* Can be used to scroll or other actions */}} />
 
         <Card className="border-2 border-foreground bg-card shadow-pixel">
           <CardHeader>
