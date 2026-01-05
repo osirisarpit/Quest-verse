@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -12,9 +13,10 @@ import { DumbbellIcon } from '@/components/icons/dumbbell-icon';
 import { RepeatIcon } from '@/components/icons/repeat-icon';
 import { getTaunt } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { Flame, Swords, Zap } from 'lucide-react';
+import { Flame, Plus, Swords, Zap } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 const categoryIcons = {
   study: <BookOpenIcon className="h-6 w-6" />,
@@ -191,6 +193,25 @@ function RivalSection({ user, initialRival }: { user: User; initialRival: Rival 
   );
 }
 
+function CreateQuestCard() {
+    return (
+        <Card className="border-2 border-foreground bg-card shadow-pixel">
+            <CardHeader>
+                <CardTitle>New Quest</CardTitle>
+                <CardDescription>Start a new challenge and earn XP.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Link href="/quests/create" passHref>
+                    <Button className="w-full border-2 border-foreground shadow-pixel-sm hover:shadow-pixel transition-shadow">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create Quest
+                    </Button>
+                </Link>
+            </CardContent>
+        </Card>
+    );
+}
+
 export function DashboardClient({
   user: initialUser,
   rival: initialRival,
@@ -245,6 +266,7 @@ export function DashboardClient({
             return q;
         })
     );
+    
     setUser((prevUser) => {
         const newTotalXP = prevUser.totalXP + xp;
         const newLevel = Math.floor(newTotalXP / 100) + 1;
@@ -348,6 +370,7 @@ export function DashboardClient({
 
       </div>
       <div className="space-y-6">
+        <CreateQuestCard />
         <RivalSection user={user} initialRival={initialRival} />
       </div>
     </div>
